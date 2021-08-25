@@ -1,4 +1,19 @@
-const Database = require("@replit/database")
-const db = new Database()
+const {	Client,	Intents} = require("discord.js");
+const client = new Client({intents: Object.values(Intents.FLAGS)})
+const config = require("./config.json")
 
-db.get("user_611938209366016000_status").then(value => {console.log(value)});
+
+client.on('messageCreate', (message) => {
+	
+	message.reply({embeds: [{title: "Hello"}]})
+});
+
+
+client.once("ready", () => {
+	console.log("ready " + client.user.tag)
+	client.user.setActivity("On")
+})
+
+
+
+client.login(config.token)
