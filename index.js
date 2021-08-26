@@ -3,7 +3,7 @@ const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS]
   //intents: [Object.values(Intents.FLAGS)] // all intent => activate if problem with no event recived
 });
-
+require("dotenv").config();
 const config = require("./config.json")
 
 
@@ -60,7 +60,7 @@ client.on("messageCreate", async (message) => {
 
 
 require("./server.js")();
-client.login(config.token)
+client.login(process.env.TOKEN)
 
 async function checkUser() {
   getConnection().query("SELECT * FROM users" , (err, result) => {  // recupérer tout les users a check dans la DB

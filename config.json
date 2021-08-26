@@ -2,12 +2,5 @@
   "prefix": "s.",
   "debug": true,
   "token": "ODY3NjUzMTYxMDM2MTUyODMy.YPkO-Q.0fT7D8RcprAyBDNTnsfJQb_WhcU",
-  "dbpass": "CNbTXvKTAk8Vh1YI",
-  "mysql": {
-    "host": "bdd.adkynet.com",
-    "port": "3306",
-    "user": "u5627_XhXRWI4qnw",
-    "database": "s5627_database",
-    "password": "bZ^lD8rNA^o+2v@cboGCc3QI"
-  }
+  "dbpass": "CNbTXvKTAk8Vh1YI"
 }
