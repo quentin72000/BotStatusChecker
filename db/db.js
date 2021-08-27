@@ -1,14 +1,14 @@
 const mysql = require('mysql');
-const mysql-config = require("../mysql.json);
+require("dotenv").config();
 
 
 module.exports.getConnection = () => {
 	const db = mysql.createConnection({
-		host: config.host,
-		port: config.port,
-		user: config.user,
-		database: config.database,
-		password: config.password,
+		host: process.env.HOST,
+		port: process.env.PORT,
+		user: process.env.USER,
+		database: process.env.DATABASE,
+		password: process.env.PASSWORD,
 	})
 	return db;
 }

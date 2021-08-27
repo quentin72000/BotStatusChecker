@@ -1,4 +1,4 @@
 node_modules
-mysql.json
 config.json
 package-lock.json
+.env
