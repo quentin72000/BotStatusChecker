@@ -1,2 +1,2 @@
-# DiscordStalker
-A French Discord Bot who check bot status.
+# BotStatusChecker
+A French Discord Bot who check user status
