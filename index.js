@@ -1,45 +1,60 @@
-const Discord = require("discord.js");
-const client = new Discord.Client;
-var moment = require('moment-timezone');
+const {	Client,	Intents, Collection, Permissions } = require("discord.js");
+const client = new Client({
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS]
+  //intents: [Object.values(Intents.FLAGS)] // all intent => activate if problem with no event recived
+});
+require("dotenv").config();
 const config = require("./config.json")
+
+
+// moment config
+var moment = require('moment-timezone');
 moment().tz("Europe/Paris");
 moment.locale("fr");
 
 
-const users = require("./users.json").users;
-const channels = require("./channels.json").channels;
+const {getConnection} = require("./db/db.js")
 
-const Database = require("@replit/database")
-const db = new Database()
 
 client.once("ready", () => {
   console.log("Logged as " + client.user.tag + "(" + client.user.id + ")")
-  console.log("User to check:" + users.length)
-  console.log("Channel to send notifications: " + channels.length)
   console.log("Starting prossec...")
-  
-  
-  checkUser()
-  setInterval(function() { 
+  getConnection().connect(function(err) { // se connecte a la db et envoie une erreur si la connection a échoué
+    if (err) throw err;
+    console.log("Connecté à la base de données MySQL!");
+  });
+
+
+ // checkUser() // check une premiére fois au démarage
+  setInterval(function () {
     checkUser() // check tout les 15 secondes
-    console.log("Checked.") 
-  }, 15 * 1000)
+    console.log("Checked.")
+  }, 15 * 1000) 
 
 })
+client.on("presenceUpdate", (oldPresence, newPresence) => {
+  //console.log(newPresence)
+})
 
-client.on("message", async (message) => {
-  if(message.author.bot)return;
-  if(message.member.hasPermission('ADMINISTRATOR')){
-  if(message.content === "s.stop")return message.reply("Pour arreter le bot, vous devez faire `s.stop confirm`\n:warning: Le seul moyen de redemarer le bot serra de depuis le panel ! :warning:")
+client.on("messageCreate", async (message) => {
+  if (message.author.bot) return;
+  if (message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    if (message.content === config.prefix + "stop") return message.reply("Pour arreter le bot, vous devez faire `s.stop confirm`\n:warning: Le seul moyen de redemarer le bot serra de depuis le panel ! :warning:")
 
-  else if(message.content === "s.stop confirm"){
-    await message.reply("Le bot va s'arreter.")
-    await console.log("Une demmande d'arret a été demandé par " + message.author.tag + " à " + new moment())
-    client.destroy();
-  }else if(message.content === "s.verify"){
-  
-  checkUser()
-  }
+    else if (message.content === config.prefix + "stop confirm") { // commande en cas de probléme
+      await message.reply("Le bot va s'arreter.")
+      await console.log("Une demmande d'arret a été demandé par " + message.author.tag + " à " + new moment())
+      client.destroy();
+    } else if (message.content === config.prefix + "verify") {
+      checkUser()
+    }else if (message.content === config.prefix + "test"){
+      getConnection().query("SELECT * FROM users" , (err, result) => {
+        if(err)throw err;
+        const member = message.guild.members.cache.get(result[0].user_id);
+        message.reply("```\n" + member.presence.status + "\n```")
+        console.log(member.presence.status)
+      })
+    }
   }
 })
 
@@ -47,80 +62,61 @@ client.on("message", async (message) => {
 require("./server.js")();
 client.login(process.env.TOKEN)
 
-function checkUser(channelAnn){
+async function checkUser() {
+  getConnection().query("SELECT * FROM users" , (err, result) => {  // recupérer tout les users a check dans la DB
+    if(err)throw err;
+    result.forEach(async(userR) => {
+      const guild = client.guilds.cache.get("694112715530305556")
+      const member = guild.members.cache.get(userR.user_id)
+      
+      if(!member.presence)return;
+      if (member.presence.status === "idle" || member.presence.status === "online" || member.presence.status === "dnd") {
+        let time = new Date().toISOString()
+          if (userR.status === "online") return; // verifie si le status du user n'est pas deja le méme que dans la DB
+          else{
+            getConnection().query("UPDATE users SET status = 'online', connectedAt = '" + time + "' WHERE user_id = '" +userR.user_id + "'", (err) => {if(err)throw err}); // set dans la DB la date et l'heure de connection du user
+            sendToAllChannelEmbed(member.user.tag, member.user.displayAvatarURL({
+                  dynamic: true
+                }), member.user.tag + " c'est connecté !", "À: " + moment(time).format("HH[h]mm [et] SS [secondes le ] Do MMMM YYYY") + "\nDéconnecté pendant: " + moment(userR.lastseen).fromNow(true), "12B533")
+              console.log("on")
+          }
+      } else if (member.presence.status === "offline") {
+        let time = new Date().toISOString()
   
-  let users = require("./users.json").users
-  let channels = require("./channels.json").channels
-  users.forEach(userID => {
-    const user = client.users.cache.get(userID)
-    if(user.presence.status === "idle" || user.presence.status === "online" || user.presence.status === "dnd"){
-      let time = new moment()
-      db.get("user_" + user.id + "_status").then(status => {
-        if(status === "online")return;
-        
-        else{    
-          db.set("user_" + user.id + "_status", "online").then(() => {
-            db.set("user_"+ user.id +"_connectAt", time).then(() => {})
-            db.get("user_" + user + "_lastseen").then(lastseen => {
-              sendToAllChannelEmbed(user.tag, user.displayAvatarURL({dynamic:true}), user.tag + " c'est connecté !", "À: " + time.format("HH[h]mm [et] SS [secondes le ] Do MMMM YYYY") + "\nDéconnecté pendant: " + moment(lastseen).fromNow(true), "12B533")
-           /*   channelAnn.send({embed: {
-                title: user.tag + " c'est connecté !",
-              description: "À: " + time.format("HH[h]mm [et] SS [secondes le ] Do MMMM YYYY") + "\nDéconnecté pendant: " + moment(lastseen).fromNow(true),
-              color: "12B533",
-              footer: {
-                text: "Si le bot spam de message, vous pouvez faire \"!stop\" pour arreter la verification"
-                }
-              }}); */
-            })
-            console.log("on")
-            
-          });
-        }
-      });
-      
-      
-  }else if(user.presence.status === "offline"){
-    let time = new moment()
-    db.get("user_" + user.id + "_status").then(userS => {
-      
-      if(userS === "offline")return;
-      else{
-        console.log('off')
-        db.set("user_" + user.id + "_status", "offline").then(() => {
-          db.get("user_"+ user.id + "_connectAt").then(connectAt => {
-            sendToAllChannelEmbed(user.tag, user.displayAvatarURL({dynamic:true}),user.tag + " c'est déconecté !", "À: " + time.format("HH[h]mm [et] SS [secondes le ] Do MMMM YYYY") + "\nConnecté pendant :" + moment(connectAt).fromNow(true))
-            // channelAnn.send({embed: {
-            //   author: {
-		        //     name: user.tag,
-		        //     icon_url: user.displayAvatarURL({dynamic:true})
-            //   },
-            //   title: user.tag + " c'est déconecté !",
-            //   description: "À: " + time.format("HH[h]mm [et] SS [secondes le ] Do MMMM YYYY") + "\nConnecté pendant :" + moment(connectAt).fromNow(true)
-            // }})
-          db.set("user_" + user.id + "_lastseen", time)
-          })
-          
-        });
+          if (userR.status === "offline") return; // verifie si le status du user n'est pas deja le méme que dans la DB
+          else {
+            console.log('off')
+
+            getConnection().query("UPDATE users SET status = 'offline', lastseen = '" + time + "' WHERE user_id = '" +userR.user_id + "'", (err) => {if(err)throw err});
+                sendToAllChannelEmbed(member.user.tag, member.user.displayAvatarURL({
+                  dynamic: true
+                }), member.user.tag + " c'est déconecté !", "À: " + moment(time).format("HH[h]mm [et] SS [secondes le ] Do MMMM YYYY") + "\nConnecté pendant :" + moment(userR.connectedAt).fromNow(true))
+          }
       }
     });
-  }
-});
-}
 
-
-function sendToAllChannelEmbed(authorName, authorAvatarUrl, title, description, color){
-  const channels = require("./channels.json").channels;
-  channels.forEach(channelID => {
-    const channel = client.channels.cache.get(channelID);
-    channel.send({embed: {
-      author: {
-        name: authorName,
-        icon_url: authorAvatarUrl,
-      },
-      title: title,
-      color: color,
-      description: description
-    }})
   })
   
 }
+
+
+async function sendToAllChannelEmbed(authorName, authorAvatarUrl, title, description, color) {
+ 	getConnection().query("SELECT * FROM `channels`",(err, result) => { // get tout les channels où il faut envoyer l'alertes
+    if(err)return console.error(err)
+    result.forEach(value => {
+      const channel = client.channels.cache.get(value.channel_id);
+      channel.send({embeds: [{
+          author: {
+            name: authorName,
+            icon_url: authorAvatarUrl,
+          },
+          title: title,
+          color: color,
+          description: description
+        }]
+      })
+    })
+  })
+}
+
+
