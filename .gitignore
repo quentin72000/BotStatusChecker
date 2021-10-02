@@ -123,3 +123,9 @@ dist
 .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+
+
+*.db
+db.js
+db_request.txt
+db_browser.sqbpro

@@ -1,1 +1,0 @@
-CREATE TABLE `s5627_database`.`users` ( `id` VARCHAR NOT NULL , `status` VARCHAR NOT NULL , `lastseen` DATE NOT NULL , `connectAt` DATE NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;	
