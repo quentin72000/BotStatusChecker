@@ -6,7 +6,7 @@ Invite link: [Click here](https://discord.com/api/oauth2/authorize?client_id=867
 # Warning: You need to enable all intents in the developer page of your bot.
 
 # Configuration
-```json
+```json5
 {
     "prefix": "s.", // prefix of message commands
     "interval_check_in_second": 15, // interval between check in second !, default : 15
