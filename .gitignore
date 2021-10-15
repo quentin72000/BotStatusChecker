@@ -45,6 +45,7 @@ build/Release
 
 # Dependency directories
 node_modules/
+package-lock.json
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -129,3 +130,5 @@ dist
 db.js
 db_request.txt
 db_browser.sqbpro
+jsconfig.json
+.jsbeautifyrc

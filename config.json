@@ -1,4 +1,6 @@
 {
-  "prefix": "s.",
-  "debug": true
+    "prefix": "s.",
+    "interval_check_in_second": 15,
+    "slash_commands_deploy_server": "896376440235388928",
+    "whitelistUsers": ["611938209366016000"] 
 }
