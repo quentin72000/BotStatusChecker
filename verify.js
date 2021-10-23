@@ -13,7 +13,7 @@ setInterval(async function () {
 async function checkUser() {
   client.db.each("SELECT * FROM users", async(err, result) => { // get all users to check in the client.db
     if (err) throw err;
-    const guild = await client.guilds.cache.get(client.config.bot_user)
+    const guild = await client.guilds.cache.get(client.config.bot_server)
     const member = await guild.members.cache.get(result.user_id)
     if (!member)throw new Error("The member of user " + result.user_id + " can't be reach. Stopping...");
     if (!member.presence)throw new Error("The presence of user " + result.user_id + " can't be reach. Stopping...");
