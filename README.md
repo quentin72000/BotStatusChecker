@@ -5,10 +5,14 @@ Invite link: [Click here](https://discord.com/api/oauth2/authorize?client_id=867
 
 # **Warning**: You need to enable the `PRESENCE INTENT` **and** the `SERVER MEMBERS INTENT` intents in the [developer page](https://discord.com/developers/applications) of your bot.
 
+
+# Requirements
+You need [Node.JS **v16.6.0**](https://nodejs.org/) or higher and npm installed.
+
 # Setup and launch
 
  Rename the file `config.json.exemple` to `config.json`
- And the file `.env.exemple` to `.env`
+ and the file `.env.exemple` to `.env`
 
  ## Configuration options (`config.json` file)
 ```json5
@@ -33,6 +37,6 @@ Run `node index.js` in a cmd open in the folder of the bot
 
 # Todo-list
 
- - [x] Multi-channel support
+ - ~~[x] Multi-channel support~~
  - [ ] Adding the choice of the bots that are supervised
  - [ ] Multi-language support
