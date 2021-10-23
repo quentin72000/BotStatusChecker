@@ -132,3 +132,4 @@ db_request.txt
 db_browser.sqbpro
 jsconfig.json
 .jsbeautifyrc
+*.json
