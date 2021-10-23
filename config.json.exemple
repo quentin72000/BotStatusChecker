@@ -1,5 +1,5 @@
 {
-    "prefix": "s.",
+    "prefix": "YOUR PREFIX",
     "interval_check_in_second": 15,
     "bot_server": "694112715530305556",
     "whitelistUsers": ["611938209366016000"] 

@@ -1,7 +1,7 @@
 const { Message, Client, Permissions:{FLAGS: perms} } = require("discord.js");
 module.exports = {
-    name: "check",
-    aliases: ['verify', "ch"],
+    name: "adduser",
+    aliases: ['addu', "au"],
     /**
      *
      * @param {Client} client
@@ -10,6 +10,7 @@ module.exports = {
      */
     run: async (client, message, args) => {
         if(!client.config.whitelistUsers.includes(message.author.id))return message.reply("Error: You can't do that.");
-        message.channel.send(`${client.ws.ping} ws ping`);
+        client.db.run("INSERT INTO users (user_id) VALUES("+ args[0]+ ")")
+		message.reply("added")
     },
 };

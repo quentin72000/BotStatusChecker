@@ -42,11 +42,11 @@ module.exports = async (client) => {
     });
     client.on("ready", async () => {
         // Register for a single guild
-        await client.guilds.cache
-            .get(client.config.slash_commands_deploy_server)
-            .commands.set(arrayOfSlashCommands);
+      /*  await client.guilds.cache
+            .get(client.config.bot_server)
+            .commands.set(arrayOfSlashCommands); */
 
         // Register for all the guilds the bot is in
-        // await client.application.commands.set(arrayOfSlashCommands);
+        await client.application.commands.set(arrayOfSlashCommands);
     });
 };
