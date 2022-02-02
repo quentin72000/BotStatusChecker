@@ -133,3 +133,4 @@ db_browser.sqbpro
 jsconfig.json
 .jsbeautifyrc
 *.json
+package-lock.json
