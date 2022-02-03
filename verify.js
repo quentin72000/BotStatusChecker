@@ -41,7 +41,6 @@ async function checkUser() {
         sendToAllChannelEmbed(result.user_id, member.user.tag, member.user.displayAvatarURL({
           dynamic: true
         }), member.user.tag + " has been disconnected !", "At: " + moment(time).format("HH[h]mm [and] SS [seconds the ] Do MMMM YYYY") + "\nConnected during :" + moment(result.connectAt).fromNow(true))
-        // moment(result.connectAt).format("DD [jours,] hh [heures,] mm [minutes et ] ss [secondes]"))
       }
     }
   })

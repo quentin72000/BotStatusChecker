@@ -1,4 +1,4 @@
-const { Message, Client, Permissions:{FLAGS: perms} } = require("discord.js");
+const { Message, Client } = require("discord.js");
 module.exports = {
     name: "eval",
     aliases: ['exec', "execute"],
