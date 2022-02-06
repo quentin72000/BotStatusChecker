@@ -37,6 +37,6 @@ Run `node index.js` in a cmd open in the folder of the bot
 
 # Todo-list
 
- - ~~[x] Multi-channel support~~
+ - [x] Multi-channel support
  - [ ] Adding the choice of the bots that are supervised
  - [ ] Multi-language support
