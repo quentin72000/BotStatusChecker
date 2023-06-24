@@ -17,6 +17,6 @@
         "glob": "^7.2.0",
         "moment": "^2.29.4",
         "moment-duration-format": "^2.3.2",
-        "sqlite3": "^4.2.0"
+        "sqlite3": "^5.1.6"
     }
 }
